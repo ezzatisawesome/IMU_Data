@@ -1,17 +1,19 @@
 import csv
 import serial
+import json
+
 
 # Main
 def main():
-    port = '/dev/cu.usbmodem1401'
+    port = '/dev/cu.usbmodem101'
     baudrate = 115200
     serialCxn = openSerial(port, baudrate)
     writer = openCsv('test.csv')
 
     while True:
         line = readLineSerial(serialCxn)
-        print(line)
-        writeLine(writer, line)
+        dictLine = convertToDict(line)
+        writeLine(writer, dictLine)
 
 # Serial functions.
 def openSerial(port: str, baudrate: int):
@@ -21,7 +23,7 @@ def openSerial(port: str, baudrate: int):
     return ser
 
 def readLineSerial(cxn: serial.Serial):
-    return cxn.readline().decode('utf-8') 
+    return cxn.readline().decode('utf-8')[:-1]
 
 # CSV functions.
 def openCsv(url: str):
@@ -29,8 +31,13 @@ def openCsv(url: str):
     csvWriter = csv.writer(csvFile, delimiter=',')
     return csvWriter
 
-def writeLine(writer: csv.writer, line: str, quotechar='\"', quoting=csv.QUOTE_NONE):
-    writer.writerow([line])
+def writeLine(writer: csv.writer, line: dict):
+    print(line)
+    writer.writerow(line)
+
+def convertToDict(line: str) -> dict:
+    return json.loads('[' + line + ']')
+
 
 if __name__ == '__main__':
     main()
