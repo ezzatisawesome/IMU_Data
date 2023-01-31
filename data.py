@@ -5,13 +5,14 @@ import json
 
 # Main
 def main():
-    port = '/dev/cu.usbmodem101'
+    port = '/dev/tty.usbmodem11301'
     baudrate = 115200
     serialCxn = openSerial(port, baudrate)
-    writer = openCsv('test.csv')
+    writer = openCsv('test2.csv')
 
     while True:
         line = readLineSerial(serialCxn)
+        print(line)
         dictLine = convertToDict(line)
         writeLine(writer, dictLine)
 
